@@ -2,6 +2,8 @@ import { react, useEffect, useState } from "react"
 import { logout } from "../components/auth"
 import { db, auth } from "../config/firebase"
 import { getDocs, collection, addDoc, deleteDoc, doc } from "firebase/firestore"
+import HomeCreateProperty from "./HomeCreateProperty"
+import HomePropertyList from "./HomePropertyList"
 
 
 export const Home = () => {
@@ -9,8 +11,9 @@ export const Home = () => {
 
     // New house states
     const [newHousingAddress, setNewHousingAddress] = useState("")
-    const [newBedrooms, setNewBedrooms] = useState(0)
-    const [newBathrooms, setNewBathrooms] = useState(0)
+    const [newBedrooms, setNewBedrooms] = useState(null)
+    const [newBathrooms, setNewBathrooms] = useState(null)
+    const [newPetsAllowed, setNewPetsAllowed] = useState(false)
 
     const housingCollectionRef = collection(db, "housing")
 
@@ -34,8 +37,14 @@ export const Home = () => {
     }, []);
 
     const deleteHouse = async (id) => {
-        const houseDoc = doc(db, "housing", id)
-        await deleteDoc(houseDoc)
+        try {
+            setHousingList((prevList) => prevList.filter((house) => house.id !== id))
+
+            const houseDoc = doc(db, "housing", id)
+            await deleteDoc(houseDoc)
+        } catch (err) {
+            console.error("Error deleting property listing", error)
+        }
     };
 
     const onSubmitHouse = async () => {
@@ -44,13 +53,23 @@ export const Home = () => {
             address: newHousingAddress, 
             bedrooms: newBedrooms,
             bathrooms: newBathrooms,
+            pets: newPetsAllowed,
             userId: auth?.currentUser?.uid, 
         });
         getHousingList()
+
+        setNewHousingAddress("");
+        setNewBedrooms("");
+        setNewBathrooms("");
+        setNewPetsAllowed(false);
     } catch (err) {
             console.err(err)
     }
     }
+
+    const handleCheckbox = (e) => {
+        setNewPetsAllowed(e.target.checked)
+    } 
 
     return (
         <>
@@ -61,24 +80,15 @@ export const Home = () => {
 
             
             <div>
-                <input placeholder="House address" onChange={(e) => setNewHousingAddress(e.target.value)}/>
-                <input placeholder="Bedroooms" type="number" onChange={(e) => setNewBedrooms(Number(e.target.value))}/>
-                <input placeholder="Bathrooms" type="number" onChange={(e) => setNewBathrooms(Number(e.target.value))}/>
-                <button onClick={onSubmitHouse}> Submit House </button>
+                <HomeCreateProperty onSubmitHouse={onSubmitHouse} setNewHousingAddress={setNewHousingAddress}
+                setNewBedrooms={setNewBedrooms} setNewBathrooms={setNewBathrooms} handleCheckbox={handleCheckbox} 
+                newHousingAddress={newHousingAddress} newBedrooms={newBedrooms} newBathrooms={newBathrooms} 
+                newPetsAllowed={newPetsAllowed} setNewPetsAllowed={setNewPetsAllowed} />
             </div>
 
             
             <div>
-                {housingList.map((house) => (
-                    <div>
-                        <h2>{house.address}</h2>
-                        <p> Bedrooms: {house.bedrooms}</p>
-                        <p> Bathrooms: {house.bathrooms}</p>
-                    
-                        <button onClick={() => deleteHouse(house.id)}> Delete House</button>
-
-                    </div>
-                ))}
+                <HomePropertyList housingList={housingList} deleteHouse={deleteHouse} />
             </div>
         </>
     )
