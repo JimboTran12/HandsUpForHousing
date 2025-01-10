@@ -29,7 +29,7 @@ export const Auth = () => {
 
 
     return ( 
-        <div>
+        <div className="login">
             <h1>Hand Up Housing</h1>
             {error && <p>{error}</p>}
             <form onSubmit={handleSubmit}>

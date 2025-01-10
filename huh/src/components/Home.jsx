@@ -4,6 +4,8 @@ import { db, auth } from "../config/firebase"
 import { getDocs, collection, addDoc, deleteDoc, doc } from "firebase/firestore"
 import HomeCreateProperty from "./HomeCreateProperty"
 import HomePropertyList from "./HomePropertyList"
+import Navbar from "./Navbar"
+import "../App.css"
 
 
 export const Home = () => {
@@ -38,8 +40,10 @@ export const Home = () => {
 
     const deleteHouse = async (id) => {
         try {
+            // Optimistically update state
             setHousingList((prevList) => prevList.filter((house) => house.id !== id))
 
+            // Delete listing from database
             const houseDoc = doc(db, "housing", id)
             await deleteDoc(houseDoc)
         } catch (err) {
@@ -58,6 +62,7 @@ export const Home = () => {
         });
         getHousingList()
 
+        // Reset input fields subsequent to submission
         setNewHousingAddress("");
         setNewBedrooms("");
         setNewBathrooms("");
@@ -74,8 +79,7 @@ export const Home = () => {
     return (
         <>
             <div>
-                <h2> Home Page </h2>
-                <button onClick={logout}> Log Out </button>
+                <Navbar logout={logout} />
             </div>
 
             
