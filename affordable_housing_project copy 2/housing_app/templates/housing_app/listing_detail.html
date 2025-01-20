@@ -1,0 +1,19 @@
+{% extends 'housing_app/base.html' %}
+
+{% block content %}
+<h2>Listing Details</h2>
+<p><strong>Address:</strong> {{ listing.address }}</p>
+<p><strong>Landlord Contact:</strong> {{ listing.landlord_contact }}</p>
+<p><strong>Bedrooms:</strong> {{ listing.bedrooms }}</p>
+<p><strong>Bathrooms:</strong> {{ listing.bathrooms }}</p>
+<p><strong>Property Type:</strong> {{ listing.property_type }}</p>
+<p><strong>Pets Allowed:</strong> {% if listing.pets_allowed %}Yes{% else %}No{% endif %}</p>
+<p><strong>ADA Accessible:</strong> {% if listing.ada_accessible %}Yes{% else %}No{% endif %}</p>
+<p><strong>Income Requirement:</strong> {{ listing.income_requirement }}</p>
+<p><strong>Past Eviction Allowed:</strong> {% if listing.past_eviction_allowed %}Yes{% else %}No{% endif %}</p>
+<p><strong>Sex Offender Allowed:</strong> {% if listing.sex_offender_allowed %}Yes{% else %}No{% endif %}</p>
+<p><strong>Criminal Record Allowed:</strong> {% if listing.criminal_record_allowed %}Yes{% else %}No{% endif %}</p>
+<p><strong>Issues Allowed:</strong> {% if listing.issues_allowed %}Yes{% else %}No{% endif %}</p>
+
+<a href="{% url 'housing_app:listing_list' %}">Back to List</a>
+{% endblock %}
